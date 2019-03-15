@@ -1,8 +1,24 @@
 {
   "compilerOptions": {
+    "declaration": false,
+    "emitDecoratorMetadata": true,
+    "experimentalDecorators": true,
+    "lib": ["es6", "dom"],
+    "mapRoot": "../build/server",
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": "../build/server",
+    "sourceMap": true,
     "target": "es6",
-    "module": "commonjs"
+    "typeRoots": [
+      "../node_modules/@types"
+    ],
+    "listFiles": true,
+    "traceResolution": false
   },
+  "rootDirs": [
+    "src/shared/**",
+  ],
   "include": [
     "src/**/*.ts"
   ],

@@ -1,27 +1,27 @@
-import { Document, Schema, Model, model } from "mongoose";
-import { IUser } from "../interfaces/user";
+import { Document, Schema, Model, model } from 'mongoose'
+import { IUser } from '../interfaces/user'
 
 export interface IUserModel extends IUser, Document {
-  fullName(): string;
+  fullName(): string
 }
 
 export let UserSchema: Schema = new Schema({
   createdAt: Date,
   email: String,
   firstName: String,
-  lastName: String
-});
+  lastName: String,
+})
 
-UserSchema.pre("save", function(next) {
-  let now = new Date();
-  if (!this["createdAt"]) {
-    this["createdAt"] = now;
+UserSchema.pre('save', function(next) {
+  let now = new Date()
+  if (!this['createdAt']) {
+    this['createdAt'] = now
   }
-  next();
-});
+  next()
+})
 
 UserSchema.methods.fullName = function(): string {
-  return this.firstName.trim() + " " + this.lastName.trim();
-};
+  return this.firstName.trim() + ' ' + this.lastName.trim()
+}
 
-export const User: Model<IUserModel> = model<IUserModel>("User", UserSchema);
+export const User: Model<IUserModel> = model<IUserModel>('User', UserSchema)
