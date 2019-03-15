@@ -1,5 +1,5 @@
 import * as CryptoJS from 'crypto-js'
-import { IConfig, AppSetting } from '../config'
+import { AppSetting, IConfig } from '../../config'
 
 const environment: IConfig = AppSetting.getConfig()
 

@@ -6,9 +6,8 @@ import * as http from 'http'
 import { ApiRouting } from './api.routing'
 import AuthService from './app/services/auth.service'
 import { AppSetting, IConfig } from './config'
-import { SwaggerController } from './controller/swagger.controller'
-import { Api } from './helpers/api'
-import { Logger } from './helpers/logger'
+import { SwaggerController } from './core/controller/swagger.controller'
+import { Api } from './core/services/api'
 
 export class ExpressApi {
   public app: express.Express
@@ -55,7 +54,6 @@ export class ExpressApi {
       // check login hash
       this.app.all('/*', AuthService.checkHeader)
     }
-    Logger.configureLogger(this.app)
   }
 
   private configureBaseRoute() {
@@ -86,9 +84,9 @@ export class ExpressApi {
   private errorHandler() {
     this.app.use(function(err, req, res, next) {
       if (req.body) {
-        Logger.error(req.body)
+        console.error(req.body)
       }
-      Logger.error(err)
+      console.error(err)
       Api.serverError(req, res, err)
     })
 

@@ -181,7 +181,7 @@ export const SAMPLE_DOC = {
             in: 'path',
             name: 'id',
             required: true,
-            type: "number"
+            type: 'number',
           },
         ],
         responses: {
@@ -210,7 +210,7 @@ export const SAMPLE_DOC = {
             in: 'path',
             name: 'id',
             required: true,
-            type: "number"
+            type: 'number',
           },
           {
             in: 'body',
@@ -231,8 +231,8 @@ export const SAMPLE_DOC = {
     },
     '/delete/{id}': {
       delete: {
-        tags: ["CRUD"],
-        description: "Delete row by Id",
+        tags: ['CRUD'],
+        description: 'Delete row by Id',
         parameters: [
           {
             in: 'header',
@@ -243,19 +243,19 @@ export const SAMPLE_DOC = {
             required: true,
           },
           {
-            name: "id",
-            in: "path",
+            name: 'id',
+            in: 'path',
             required: true,
-            type: "number"
-          }
+            type: 'number',
+          },
         ],
         responses: {
-          "200": {
-            description: "Success"
-          }
-        }
-      }
-    }
+          '200': {
+            description: 'Success',
+          },
+        },
+      },
+    },
   },
   definitions: {
     login: {

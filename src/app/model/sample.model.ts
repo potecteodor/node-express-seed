@@ -8,7 +8,6 @@ import { BaseModel } from './base.model'
  * @desc [description]
  */
 export class SampleModel extends BaseModel {
-
   tableName: string = 'sample'
 
   pkName: string = 'id'
@@ -22,5 +21,4 @@ export class SampleModel extends BaseModel {
       ) ENGINE=MyISAM DEFAULT CHARSET=utf8;`)
     })
   }
-
 }

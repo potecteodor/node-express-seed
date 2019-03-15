@@ -68,18 +68,21 @@ export abstract class MysqlModel {
    * @param String the query
    * @return void
    */
-  async executeQuery(sql: string, withResult = false){
+  async executeQuery(sql: string, withResult = false) {
     const conn = await this.connect()
-    if(withResult){
+    if (withResult) {
       return new Promise((resolve, reject) => {
         console.log('sql', sql)
-        conn.query(sql).then(result => {
-          resolve(result[0])
-        }, error => {
-          reject(error)
-        })
+        conn.query(sql).then(
+          result => {
+            resolve(result[0])
+          },
+          error => {
+            reject(error)
+          }
+        )
       })
-    }else{
+    } else {
       return await conn.query(sql)
     }
   }
@@ -92,7 +95,7 @@ export abstract class MysqlModel {
    * @return void
    */
   public async deleteRecords(condition, limit: number = null) {
-    const withLimit = (limit > 0 ) ? (' LIMIT ' + limit) : ''
+    const withLimit = limit > 0 ? ' LIMIT ' + limit : ''
     const sql = `DELETE FROM ${this.tableName} WHERE ${condition} ${withLimit}`
     return this.executeQuery(sql, true)
   }
@@ -178,11 +181,14 @@ export abstract class MysqlModel {
   public async getById(id: any) {
     const sql = `SELECT * FROM ${this.tableName} WHERE ${this.pkName} = ${id} LIMIT 1`
     return new Promise((resolve, reject) => {
-      this.executeQuery(sql, true).then(result => {
-        resolve(result[0])
-      }, err => {
-        reject(err)
-      })
+      this.executeQuery(sql, true).then(
+        result => {
+          resolve(result[0])
+        },
+        err => {
+          reject(err)
+        }
+      )
     })
   }
 
@@ -251,7 +257,6 @@ export abstract class MysqlModel {
     	$result->close();
     	return $o;
     }*/
-
 
   /**
    * Sanitize data

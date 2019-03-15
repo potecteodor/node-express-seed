@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express'
 import { AppSetting } from '../../config'
-import { Api, Logger } from '../../helpers'
-import Crypt from '../../helpers/crypt'
+import { Api } from '../../core/services/api'
+import Crypt from '../../core/services/crypt'
 
 const publicRoutes = ['favicon.ico', 'swagger', 'register', 'login']
 
@@ -33,7 +33,7 @@ export default class AuthService {
         return next()
       }
       if (publicMethods.indexOf(urlArr[1] + '/' + urlArr[2] + '/' + urlArr[3]) >= 0) {
-        Logger.info(
+        console.log(
           'auth pass because of method' + urlArr[1] + '/' + urlArr[2] + '/' + urlArr[3]
         )
         return next()

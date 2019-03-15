@@ -1,5 +1,5 @@
 import { Express } from 'express'
-import { SAMPLE_DOC } from '../swagger-docs'
+import { SAMPLE_DOC } from '../../docs'
 const swaggerUi = require('swagger-ui-express')
 
 export class SwaggerController {

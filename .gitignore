@@ -42,3 +42,4 @@ bundle.js
 yarn.lock
 /package-lock.json
 /src/config/config.dev.json
+/package-lock.json

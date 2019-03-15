@@ -1,0 +1,16 @@
+{
+  "recommendations": [
+    "johnpapa.angular-essentials",
+    "PKief.material-icon-theme",
+    "formulahendry.auto-close-tag",
+    "hookyqr.beautify",
+    "eamodio.gitlens",
+    "rbbit.typescript-hero",
+    "DSKWRK.vscode-generate-getter-setter",
+    "esbenp.prettier-vscode",
+    "alphabotsec.vscode-eclipse-keybindings",
+    "seveseves.ngx-translate-zombies",
+    "edwardhjp.vscode-author-generator",
+    "streetsidesoftware.code-spell-checker"
+  ]
+}

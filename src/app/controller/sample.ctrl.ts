@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
-import { Api } from '../../helpers'
-import Crypt from '../../helpers/crypt'
+import { Api } from '../../core/services/api'
+import Crypt from '../../core/services/crypt'
 import { SampleModel } from '../model/sample.model'
 import AuthService from '../services/auth.service'
 
@@ -88,11 +88,6 @@ export class SampleCtrl {
    */
   async getAll(req: Request, res: Response) {
     const m = new SampleModel()
-    await m.getAll()
-    await m.getAll()
-    await m.getAll()
-    await m.getAll()
-    await m.getAll()
     m.getAll().then(
       result => Api.ok(req, res, result),
       error => Api.serverError(req, res, error)
