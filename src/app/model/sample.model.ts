@@ -1,12 +1,5 @@
 import { BaseModel } from './base.model'
 
-/**
- * @author Florin Ancuta
- * @email florin@doitdev.ro
- * @create date 2019-03-14 15:06:58
- * @modify date 2019-03-14 15:06:58
- * @desc [description]
- */
 export class SampleModel extends BaseModel {
   tableName: string = 'sample'
 

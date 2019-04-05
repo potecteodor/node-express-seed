@@ -2,14 +2,14 @@
   "Config": {
     "port": 40401,
     "corsDomains": [
-      "http://localhost:4000"
+      "http://localhost:4200"
     ],
     "appConfig": {
       "version": "1.0.0",
       "name": "express-api",
       "env": "development",
       "withSetup": true,
-      "appPath": "F:/work/acttime.eu/old-app/server/"
+      "appPath": "F:/work.eu/old-app/server/"
     },
     "thirdParty": {
       "countryRestUrl": "http://restcountries.eu/rest/v2/all",

@@ -1,6 +1,6 @@
-import { AppSetting, IConfig } from '../../config'
-import Crypt from '../../helpers/crypt'
-import MailHelper from '../../helpers/mail-helper'
+import { AppSetting, IConfig } from '../../../config'
+import Crypt from '../../../core/services/crypt'
+import MailHelper from '../../../core/services/mail-helper'
 
 // minutes
 const ACTIVATION_EXPIRATION = 100
@@ -10,21 +10,17 @@ const config: IConfig = AppSetting.getConfig()
 export default class AuthMail {
   /* Reset Password */
   static resetPasswordMail(email) {
-    const now = new Date(),
-      sav = new Date(now)
-    sav.setMinutes(now.getMinutes() + ACTIVATION_EXPIRATION1)
     const k = Crypt.crypt({
       key: email,
-      exp: sav.getTime(),
     })
-    const link = config.corsDomains[0] + '/#/auth/password-reset/' + k
+    const link = config.corsDomains[0] + '/#/auth/reset-password/' + k
     const mailOptions = {
       to: email,
-      subject: '🕑Reset Password',
+      subject: '[Reset Password]',
       text: 'Click on this <a href="' + link + '">link</a> to reset your password!',
       htmlFile: 'resetPassword',
       data: {
-        title: 'Reset Password',
+        title: 'Reset Password for TaskManager Account',
         header: 'New Password',
         content: 'Click on this <a href="' + link + '">link</a> to reset your password!',
       },
@@ -33,33 +29,27 @@ export default class AuthMail {
   }
 
   /**
-   * Invite method for register without invite
+   * email activation after register
    *
    * @param result
    * @param email
    */
-  static sendActivationEmail(result, email) {
-    const now = new Date(),
-      sav = new Date(now)
-    sav.setMinutes(now.getMinutes() + ACTIVATION_EXPIRATION)
-    const k = Crypt.crypt({
-      key: result.get('id'),
-      exp: sav.getTime(),
-    })
+  static sendActivationEmail(id, email) {
+    const k = Crypt.crypt({ key: id })
     // send registration email
     const link = config.corsDomains[0] + '/#/auth/activate/' + k
 
     const mailOptions = {
       to: email,
-      subject: 'Activate your actTime account !',
+      subject: '[Email Activation]!',
       text:
         'Your account is now created !<br />Click on this <a href="' +
         link +
         '">link</a> to activate your account !',
       htmlFile: 'sendActivation',
       data: {
-        title: 'actTime registration',
-        header: 'welcome to acttime',
+        title: 'TaskManager Account Activation',
+        header: 'Register to TaskManager',
         content:
           'Your account is now created !<br />Click on this <a href="' +
           link +

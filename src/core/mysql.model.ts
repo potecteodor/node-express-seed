@@ -2,13 +2,6 @@ import { AppSetting, IConfig } from '../config'
 
 const mysql = require('mysql2/promise')
 
-/**
- * @author Florin Ancuta
- * @email florin@doitdev.ro
- * @create date 2019-03-13 14:24:32
- * @modify date 2019-03-13 14:24:32
- * @desc [description]
- */
 export abstract class MysqlModel {
   /**
    * table name

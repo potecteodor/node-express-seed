@@ -5,7 +5,17 @@ import Crypt from '../../core/services/crypt'
 
 const publicRoutes = ['favicon.ico', 'swagger', 'register', 'login']
 
-const publicMethods = ['sample/login']
+const publicMethods = [
+  'sample/login',
+  'task/test',
+  'auth/register',
+  'auth/login',
+  'auth/checkEmail',
+  'auth/activate',
+  'auth/resendActivation',
+  'auth/forgotPassword',
+  'auth/resetPassword',
+]
 
 const EXPIRATION_MINUTES = 15
 

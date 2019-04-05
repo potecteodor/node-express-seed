@@ -2,7 +2,7 @@
   "name": "nes-api",
   "version": "0.0.1",
   "description": "Express API",
-  "author": "florin@doitdev.ro",
+  "author": "teodor.potec@gmail.com",
   "main": "build/main.js",
   "scripts": {
     "standardize": "prettier **/*.ts --write",

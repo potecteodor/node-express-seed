@@ -1,4 +1,4 @@
-import { IConfig, AppSetting } from '../config'
+import { AppSetting, IConfig } from '../../config'
 
 const nodemailer = require('nodemailer')
 
@@ -18,7 +18,7 @@ export default class MailHelper {
     const tpl = template || 'index'
     const config: IConfig = AppSetting.getConfig()
     let path = config.appConfig.appPath + 'static/email/' + tpl + '.html'
-    var fileData = fs.readFileSync(path, 'utf8', function(err, fileData) {
+    var fileData = fs.readFileSync(path, 'utf8', function (err, fileData) {
       if (err) {
         return console.log('read', err)
       }
@@ -48,7 +48,7 @@ export default class MailHelper {
       },
     })
     let mo = {}
-    mo['from'] = mailOptions['from'] || '"🕑 actTime" <acttimemailler@gmail.com>'
+    mo['from'] = mailOptions['from'] || '"TaskManager" <acttimemailler@gmail.com>'
     mo['to'] = mailOptions['to']
     mo['subject'] = mailOptions['subject']
     mo['text'] = mailOptions['text'] || ''
