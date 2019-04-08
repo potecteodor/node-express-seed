@@ -18,7 +18,7 @@ export default class MailHelper {
     const tpl = template || 'index'
     const config: IConfig = AppSetting.getConfig()
     let path = config.appConfig.appPath + 'static/email/' + tpl + '.html'
-    var fileData = fs.readFileSync(path, 'utf8', function (err, fileData) {
+    var fileData = fs.readFileSync(path, 'utf8', function(err, fileData) {
       if (err) {
         return console.log('read', err)
       }

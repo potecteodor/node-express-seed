@@ -15,6 +15,8 @@ const publicMethods = [
   'auth/resendActivation',
   'auth/forgotPassword',
   'auth/resetPassword',
+  'auth/checkPassword',
+  'auth/changePassword',
 ]
 
 const EXPIRATION_MINUTES = 15

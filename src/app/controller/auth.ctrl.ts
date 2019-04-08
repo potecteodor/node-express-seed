@@ -17,6 +17,53 @@ export class AuthCtrl {
     this.router.post('/activate/:key', this.activate)
     this.router.post('/forgotPassword', this.forgotPassword)
     this.router.post('/resetPassword', this.resetPassword)
+    this.router.post('/checkPassword', this.checkPassword)
+    this.router.post('/changePassword', this.changePassword)
+  }
+
+  /**
+   * changePassword
+   *
+   * @param req
+   * @param res
+   */
+  changePassword(req: Request, res: Response) {
+    const newPass = req.body.newPass
+    const id = req.body.id
+    const m = new UserModel()
+    const sql = `UPDATE user SET password = '${newPass}' WHERE id=${id}`
+    try {
+      m.executeQuery(sql).then(result => {
+        Api.ok(req, res, true)
+      })
+    } catch (err) {
+      Api.serverError(req, res, err)
+    }
+  }
+
+  /**
+   * checkPassword
+   *
+   * @param req
+   * @param res
+   */
+  checkPassword(req: Request, res: Response) {
+    const pass = req.body.password
+    const id = req.body.id
+    const m = new UserModel()
+    const sql = `Select * From user Where password = '${pass}' AND id=${id}`
+    m.executeQuery(sql).then(
+      result => {
+        if (result[0].length > 0) {
+          Api.ok(req, res, true)
+        } else {
+          Api.ok(req, res, false)
+        }
+      },
+      error => {
+        Api.serverError(req, res, error)
+      }
+    )
   }
 
   /**
