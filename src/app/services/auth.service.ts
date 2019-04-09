@@ -3,7 +3,15 @@ import { AppSetting } from '../../config'
 import { Api } from '../../core/services/api'
 import Crypt from '../../core/services/crypt'
 
-const publicRoutes = ['favicon.ico', 'swagger', 'register', 'login']
+const publicRoutes = [
+  'favicon.ico',
+  'swagger',
+  'register',
+  'login',
+  'auth',
+  'project',
+  'collaborator',
+]
 
 const publicMethods = [
   'sample/login',
