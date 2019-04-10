@@ -12,6 +12,27 @@ export class CollaboratorCtrl {
     this.router.post('/addCollaborator', this.addCollaborator)
     this.router.post('/checkEmail', this.checkEmail)
     this.router.post('/invite', this.invite)
+    this.router.post('/delete', this.delete)
+  }
+
+  /**
+   * Delete Collaborator by id
+   * @param req
+   * @param res
+   */
+  delete(req: Request, res: Response) {
+    try {
+      const data = req.body.data
+      const my_id = data.my_id
+      const collab_id = data.collab_id
+      const m = new CollaboratorModel()
+      const sql = `DELETE FROM collaborator WHERE my_id=${my_id} AND collab_id=${collab_id}`
+      m.executeQuery(sql).then(result => {
+        Api.ok(req, res, true)
+      })
+    } catch (err) {
+      Api.serverError(req, res, err)
+    }
   }
 
   invite(req: Request, res: Response) {
@@ -45,12 +66,24 @@ export class CollaboratorCtrl {
    */
   checkEmail(req: Request, res: Response) {
     const email = req.body.email
+    const my_id = req.body.my_id
     const m = new UserModel()
     const sql = `Select * From user Where email = '${email}'`
+    // const sql2 = `Select * From collaborator JOIN user Where collaborator.my_id=${my_id} AND user.email='${email}'`
     m.executeQuery(sql, true).then(
       result => {
         if (result[0]) {
-          Api.ok(req, res, result[0])
+          const sql2 = `Select * From collaborator Where my_id=${my_id} AND collab_id=${
+            result[0].id
+          }`
+          m.executeQuery(sql2, true).then(r => {
+            if (r[0]) {
+              console.log(r[0])
+              Api.ok(req, res, 'exist')
+            } else {
+              Api.ok(req, res, result[0])
+            }
+          })
         } else {
           Api.ok(req, res, false)
         }
