@@ -2,6 +2,7 @@ import { Request, Response, Router } from 'express'
 import { Api } from '../../core/services/api'
 import { ProjectModel } from '../model/project.model'
 import { ProjectMembersModel } from '../model/project_members.model'
+import { TaskModel } from '../model/task.model'
 import { UserModel } from '../model/user.model'
 
 export class ProjectCtrl {
@@ -14,10 +15,29 @@ export class ProjectCtrl {
     this.router.get('/getOtherProjects/:id', this.getOtherProjects)
     this.router.get('/getProjectMembers/:id', this.getProjectMembers)
     this.router.get('/getOneProject/:id', this.getOneProject)
+    this.router.get('/getProjectTasks/:id', this.getProjectTasks)
     this.router.post('/create', this.createProject)
     this.router.post('/checkProjectName', this.checkProjectName)
     this.router.put('/editProject', this.updateProject)
     this.router.delete('/deleteProject/:id', this.deleteProject)
+  }
+
+  /**
+   * Get all tasks for a project
+   * @param req
+   * @param res
+   */
+  getProjectTasks(req: Request, res: Response) {
+    try {
+      const id = req.params.id
+      const sql = `Select task.* From task Join project ON project.id = task.project_id Where project.id = ${id}`
+      const m = new TaskModel()
+      m.executeQuery(sql, true).then(result => {
+        Api.ok(req, res, result)
+      })
+    } catch (err) {
+      Api.serverError(req, res, err)
+    }
   }
 
   /**

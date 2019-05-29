@@ -11,11 +11,13 @@ const publicRoutes = [
   'auth',
   'project',
   'collaborator',
+  'task',
+  'user',
+  'chat',
 ]
 
 const publicMethods = [
   'sample/login',
-  'task/test',
   'auth/register',
   'auth/login',
   'auth/checkEmail',

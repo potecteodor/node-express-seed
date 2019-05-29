@@ -1,13 +1,13 @@
-import { json, urlencoded } from 'body-parser';
-import * as compression from 'compression';
-import * as express from 'express';
-import { NextFunction, Request, Response } from 'express';
-import * as http from 'http';
-import { ApiRouting } from './api.routing';
-import AuthService from './app/services/auth.service';
-import { AppSetting, IConfig } from './config';
-import { SwaggerController } from './core/controller/swagger.controller';
-import { Api } from './core/services/api';
+import { json, urlencoded } from 'body-parser'
+import * as compression from 'compression'
+import * as express from 'express'
+import { NextFunction, Request, Response } from 'express'
+import * as http from 'http'
+import { ApiRouting } from './api.routing'
+import AuthService from './app/services/auth.service'
+import { AppSetting, IConfig } from './config'
+import { SwaggerController } from './core/controller/swagger.controller'
+import { Api } from './core/services/api'
 
 export class ExpressApi {
   public app: express.Express

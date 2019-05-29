@@ -95,4 +95,42 @@ export default class AuthMail {
     }
     MailHelper.send(mailOptions)
   }
+
+  /**
+   * Invite method for register without invite
+   *
+   * @param result
+   * @param email
+   */
+  static sendInvitation(email, from) {
+    // send registration email
+    const link = config.corsDomains[0] + '/#/auth/register/'
+
+    const mailOptions = {
+      to: email,
+      subject: 'Invited to TaskManager!',
+      text:
+        from.display_name +
+        ' (' +
+        from.email +
+        ') has invited you!<br/>' +
+        'Click on this <a href="' +
+        link +
+        '">link</a> to register!',
+      htmlFile: 'resendActivation',
+      data: {
+        title: 'TaskManager registration',
+        header: 'Invited to TaskManager!',
+        content:
+          from.display_name +
+          ' (' +
+          from.email +
+          ') has invited you!<br/>' +
+          'Click on this <a href="' +
+          link +
+          '">link</a> to register!',
+      },
+    }
+    MailHelper.send(mailOptions)
+  }
 }

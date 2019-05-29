@@ -1,5 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { Api } from '../../core/services/api'
+import AuthMail from '../helpers/mail/auth.mail'
 import { CollaboratorModel } from '../model/collaborator.model'
 import { UserModel } from '../model/user.model'
 
@@ -9,6 +10,7 @@ export class CollaboratorCtrl {
 
   constructor() {
     this.router.get('/getAll/:id', this.getAll)
+    this.router.get('/getAllCollabs/:id', this.getAllCollabs)
     this.router.post('/addCollaborator', this.addCollaborator)
     this.router.post('/checkEmail', this.checkEmail)
     this.router.post('/invite', this.invite)
@@ -36,7 +38,43 @@ export class CollaboratorCtrl {
   }
 
   invite(req: Request, res: Response) {
-    Api.ok(req, res, true)
+    try {
+      const email = req.body.email
+      const id = req.body.id
+      const sql = `Select * From user Where id=${id}`
+      const m = new UserModel()
+      m.executeQuery(sql, true).then(
+        result => {
+          console.log(result)
+          AuthMail.sendInvitation(email, result[0])
+          Api.ok(req, res, true)
+        },
+        error => {
+          Api.serverError(req, res, error)
+        }
+      )
+    } catch (err) {
+      Api.serverError(req, res, err)
+    }
+  }
+
+  /**
+   * Get all Collaborators
+   * @param req
+   * @param res
+   */
+  getAllCollabs(req: Request, res: Response) {
+    const id = req.params.id
+    const m = new CollaboratorModel()
+    const sql = `Select user.id,user.display_name,user.avatar From user Inner JOIN collaborator ON collaborator.collab_id=user.id Where collaborator.my_id=${id}`
+    m.executeQuery(sql, true).then(
+      result => {
+        Api.ok(req, res, result)
+      },
+      error => {
+        Api.serverError(req, res, error)
+      }
+    )
   }
 
   /**
@@ -105,7 +143,7 @@ export class CollaboratorCtrl {
       const my_id = req.body.my_id
       const collab_id = req.body.collab_id
       const m = new CollaboratorModel()
-      const sql = `INSERT INTO collaborator(my_id, collab_id) VALUES(${my_id}, ${collab_id});`
+      const sql = `INSERT INTO collaborator(my_id, collab_id) VALUES(${my_id}, ${collab_id}),(${collab_id},${my_id});`
       m.executeQuery(sql).then(result => {
         Api.ok(req, res, true)
       })

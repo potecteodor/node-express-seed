@@ -39,8 +39,8 @@ io.on('connection', function(socket) {
   socket.on('sendMessage', function(d: any) {
     console.log('Message received:')
     let to = ''
-    if (d.to) {
-      to = d.to.sId
+    if (d.to_who) {
+      to = d.to_who.sId
     }
     // delete d['to']
     if (to.length > 0) {
