@@ -1,5 +1,6 @@
 export interface IConfig {
   port: number
+  uploadConfig: string
   corsDomains: string[]
   appConfig: any
   thirdParty: {
