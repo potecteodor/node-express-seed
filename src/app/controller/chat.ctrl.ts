@@ -32,9 +32,7 @@ export class ChatCtrl {
       const data = req.body
       const to = JSON.stringify(data.to_who)
       const from = JSON.stringify(data.from_who)
-      const sql = `INSERT INTO chat(message,from_who,to_who) VALUES('${
-        data.message
-      }','${from}','${to}');`
+      const sql = `INSERT INTO chat(message,from_who,to_who) VALUES('${data.message}','${from}','${to}');`
       console.log(sql)
       const m = new ChatModel()
       m.executeQuery(sql).then(result => {

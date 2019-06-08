@@ -4,7 +4,6 @@ export interface IConfig {
   corsDomains: string[]
   appConfig: any
   thirdParty: {
-    countryRestUrl: string
     staticPath: string
   }
   DBConnections: {

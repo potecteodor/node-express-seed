@@ -111,9 +111,7 @@ export class CollaboratorCtrl {
     m.executeQuery(sql, true).then(
       result => {
         if (result[0]) {
-          const sql2 = `Select * From collaborator Where my_id=${my_id} AND collab_id=${
-            result[0].id
-          }`
+          const sql2 = `Select * From collaborator Where my_id=${my_id} AND collab_id=${result[0].id}`
           m.executeQuery(sql2, true).then(r => {
             if (r[0]) {
               console.log(r[0])

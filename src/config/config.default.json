@@ -1,6 +1,6 @@
 {
   "Config": {
-    "port": 40401,
+    "port": 40402,
     "corsDomains": [
       "http://localhost:4200"
     ],
@@ -12,7 +12,6 @@
       "appPath": "F:/work.eu/old-app/server/"
     },
     "thirdParty": {
-      "countryRestUrl": "http://restcountries.eu/rest/v2/all",
       "staticPath": "static/"
     },
     "DBConnections": {
@@ -23,7 +22,7 @@
         },
         "user": "root",
         "password": "",
-        "database": "testdb_act",
+        "database": "licenta",
         "options": {
           "host": "localhost",
           "requestTimeout": 300000,
