@@ -1,8 +1,17 @@
 import { AppSetting, IConfig } from '../config'
 
-const mysql = require('mysql2/promise')
+const mysql = require('mysql2')
 
-export abstract class MysqlModel {
+export let dbConnection = null
+
+/**
+ * @author Florin Ancuta
+ * @email florin@doitdev.ro
+ * @create date 2019-03-13 14:24:32
+ * @modify date 2019-03-13 14:24:32
+ * @desc [description]
+ */
+export abstract class MysqlModel<T> {
   /**
    * table name
    */
@@ -17,6 +26,8 @@ export abstract class MysqlModel {
 
   private _dbName: string = null
 
+  private _lastResult: any
+
   constructor(dbName: string = null) {
     this._dbName = dbName
   }
@@ -25,21 +36,34 @@ export abstract class MysqlModel {
    * basic connect function
    */
   async connect() {
-    if (!this._connection) {
-      console.log('starting connection')
-      const config: IConfig = AppSetting.getConfig()
-      this._connection = await mysql.createConnection({
-        host: config.DBConnections.default.options.host,
-        user: config.DBConnections.default.user,
-        password: config.DBConnections.default.password,
-        database: this._dbName || config.DBConnections.default.database,
-      })
+    if (!dbConnection || dbConnection.connection._closing) {
+      try {
+        console.log('starting SQL connection...')
+        const config: IConfig = AppSetting.getConfig()
+        const pool = mysql.createConnection({
+          host: config.DBConnections.default.options.host,
+          user: config.DBConnections.default.user,
+          password: config.DBConnections.default.password,
+          database: this._dbName || config.DBConnections.default.database,
+          connectionLimit: 10,
+          waitForConnections: true,
+          queueLimit: 0,
+        })
+        dbConnection = await pool.promise()
+        return dbConnection
+      } catch (error) {
+        return console.log(`Could not connect - ${error}`)
+      }
     }
-    return this._connection
+    return dbConnection
   }
 
   get connection() {
-    return this._connection
+    return dbConnection
+  }
+
+  get lastResult() {
+    return this._lastResult
   }
 
   /**
@@ -61,19 +85,12 @@ export abstract class MysqlModel {
    * @param String the query
    * @return void
    */
-  async executeQuery(sql: string, withResult = false) {
+  async executeQuery(sql: string, withResult = false): Promise<any> {
     const conn = await this.connect()
     if (withResult) {
       return new Promise((resolve, reject) => {
         console.log('sql', sql)
-        conn.query(sql).then(
-          result => {
-            resolve(result[0])
-          },
-          error => {
-            reject(error)
-          }
-        )
+        conn.query(sql).then(result => resolve(result[0]), error => reject(error))
       })
     } else {
       return await conn.query(sql)
@@ -90,7 +107,7 @@ export abstract class MysqlModel {
   public async deleteRecords(condition, limit: number = null) {
     const withLimit = limit > 0 ? ' LIMIT ' + limit : ''
     const sql = `DELETE FROM ${this.tableName} WHERE ${condition} ${withLimit}`
-    return this.executeQuery(sql, true)
+    return await this.executeQuery(sql, true)
   }
 
   /**
@@ -112,15 +129,18 @@ export abstract class MysqlModel {
    * @param String the condition
    * @return bool
    */
-  public async updateRecords(changes, condition) {
+  public async updateRecords(changes, condition): Promise<T> {
     const table = this.tableName
     let update = 'UPDATE `' + table + '` SET '
     for (let field in changes) {
       let value = changes[field]
-      if (this.is_numeric(value)) {
-        update += '`' + field + '`=' + value + ','
-      } else {
-        update += '`' + field + "`='" + value + "',"
+      switch (typeof value) {
+        case 'string':
+          update += '`' + field + "`='" + this.addslashes(value) + "',"
+          break
+        default:
+          update += '`' + field + '`=' + value + ','
+          break
       }
     }
     // remove our trailing ,
@@ -128,26 +148,28 @@ export abstract class MysqlModel {
     if (condition !== '') {
       update += ' WHERE ' + condition
     }
-    const conn = await this.connect()
-    return new Promise((resolve, reject) => {
-      conn.query(update).then(result => {
-        resolve(result[0])
-      })
+    return new Promise<T>((resolve, reject) => {
+      this.executeQuery(update, true).then((data: T) => resolve(data), err => reject(err))
     })
   }
 
   /**
    * simple insert in database
    */
-  private async insertSimple(data) {
-    console.log(data)
+  public async insertSimple(data: T): Promise<T> {
     let fields = ''
     let values = ''
     for (let f in data) {
       let v = data[f]
       fields += '`' + f + '`,'
-      values +=
-        this.is_numeric(v) && ++v === v ? v + ',' : "'" + this.addslashes(v) + "',"
+      switch (typeof v) {
+        case 'string':
+          values += "'" + this.addslashes(v) + "',"
+          break
+        default:
+          values += v + ','
+          break
+      }
     }
     //	remove our trailing ,
     fields = fields.slice(0, fields.length - 1)
@@ -155,7 +177,16 @@ export abstract class MysqlModel {
     values = values.slice(0, values.length - 1)
     const insert =
       'INSERT INTO `' + this.tableName + '` (' + fields + ') VALUES (' + values + ')'
-    return this.executeQuery(insert, true)
+    return new Promise<T>((resolve, reject) => {
+      this.executeQuery(insert, true).then(
+        d => {
+          this.getById(d.insertId).then((data: T) => resolve(data), err => reject(err))
+        },
+        err => {
+          return reject({ type: 'DB Error', body: err })
+        }
+      )
+    })
   }
 
   /**
@@ -163,7 +194,7 @@ export abstract class MysqlModel {
    */
   public async getAll() {
     const sql = `SELECT * FROM ${this.tableName}`
-    return this.executeQuery(sql, true)
+    return await this.executeQuery(sql, true)
   }
 
   /**
@@ -171,16 +202,31 @@ export abstract class MysqlModel {
    *
    * @param id
    */
-  public async getById(id: any) {
+  public async getById(id: any): Promise<T> {
     const sql = `SELECT * FROM ${this.tableName} WHERE ${this.pkName} = ${id} LIMIT 1`
+    return new Promise<T>((resolve, reject) => {
+      this.executeQuery(sql, true).then(result => resolve(result[0]), err => reject(err))
+    })
+  }
+
+  /**
+   *
+   * @param where
+   */
+  public async getAllByWhere(where) {
+    const sql = `SELECT * FROM ${this.tableName} WHERE ${where} `
+    return await this.executeQuery(sql, true)
+  }
+
+  /**
+   *
+   * @param where
+   */
+  public async getByWhere(where): Promise<any> {
     return new Promise((resolve, reject) => {
-      this.executeQuery(sql, true).then(
-        result => {
-          resolve(result[0])
-        },
-        err => {
-          reject(err)
-        }
+      this.getAllByWhere(where + ' LIMIT 1').then(
+        data => resolve(data[0]),
+        error => reject(error)
       )
     })
   }
@@ -191,7 +237,7 @@ export abstract class MysqlModel {
    * @param array data to insert field => value
    * @return bool
    */
-  public async insertRecords($data) {
+  public async insertRecords($data): Promise<T> {
     //  $t = $this -> get('t');
     //	$t::prt($data);
     // if ($t:: isMultiArray($data)) {
@@ -210,7 +256,7 @@ export abstract class MysqlModel {
     // this._pk[this.mName][this._pk] = value
   }
 
-  public async save(data) {
+  public async save(data: T): Promise<T> {
     const pkArr = this.pkName
     if (data[pkArr] > 0) {
       console.log('save will do an update now.')
@@ -230,16 +276,7 @@ export abstract class MysqlModel {
     }
 
 
-    public function getAllByWhere($w){
-    	$sql = "SELECT * FROM `{$this->mname}` WHERE {$w} ";
-    	$this->executeQuery($sql, MYSQLI_STORE_RESULT);
-    	return $this->last;
-    }
 
-
-    public function getByWhere($w){
-    	return $this->getAllByWhere($w . " LIMIT 1");
-    }
 
 
     public function resultToObject($result = null){
@@ -280,35 +317,11 @@ export abstract class MysqlModel {
   }
 
   private addslashes(str) {
-    return str.replace(/'/g, "\\'")
+    try {
+      return str.replace(/'/g, "\\'")
+    } catch (e) {
+      return str
+    }
   }
 
-  /*
-  private function insertMultiple($data){
-    	$t = $this->get('t');
-    	$insert = "INSERT INTO {$this->mname} (";
-    	$fields = "";
-    	$values = "";
-    	$x=0;
-    	foreach($data as $d){
-    		$fields = "";
-    		$values .= "(";
-    		foreach($d as $f=>$v){
-    			if($x==0){
-    				$fields  .= "`$f`,";
-    			}
-    			$values .= ( is_numeric( $v ) && ( intval( $v ) == $v ) ) ? $v."," : "'" .addslashes($v). "',";
-    		}
-    		$x++;
-	    	$fields = substr($fields, 0, -1);
-    		$values = substr($values, 0, -1) . '),';
-	    	$insert .= $fields;
-    	}
-
-    	$values = substr($values, 0, -1);
-    	$insert .= ') VALUES ' . $values;
-    	$this->executeQuery( $insert );
-    	return true;
-    }
-    */
 }
