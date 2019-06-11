@@ -323,5 +323,4 @@ export abstract class MysqlModel<T> {
       return str
     }
   }
-
 }
