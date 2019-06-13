@@ -68,16 +68,12 @@ export class CompanyService {
                     const d = new Date()
                     const t = d.getTime()
                     conn.query(
-                      `UPDATE tbloptions SET value='${
-                        comp.timezone
-                      }' WHERE name='default_timezone'`
+                      `UPDATE tbloptions SET value='${comp.timezone}' WHERE name='default_timezone'`
                     )
                     conn.query(`UPDATE tbloptions SET value='${t}' WHERE name='di'`)
                     conn.query(
                       `INSERT INTO tblstaff (firstname, lastname, password, email, datecreated, admin, active) VALUES
-                        ('${comp.first_name}', '${comp.last_name}', '${
-                        comp.password
-                      }', '${comp.email}', ` +
+                        ('${comp.first_name}', '${comp.last_name}', '${comp.password}', '${comp.email}', ` +
                         conn.escape(d) +
                         `, 1, 1)`
                     )
