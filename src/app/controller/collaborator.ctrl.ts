@@ -29,8 +29,11 @@ export class CollaboratorCtrl {
       const collab_id = data.collab_id
       const m = new CollaboratorModel()
       const sql = `DELETE FROM collaborator WHERE my_id=${my_id} AND collab_id=${collab_id}`
+      const sql2 = `DELETE FROM collaborator WHERE my_id=${collab_id} AND collab_id=${my_id}`
       m.executeQuery(sql).then(result => {
-        Api.ok(req, res, true)
+        m.executeQuery(sql2).then(r => {
+          Api.ok(req, res, true)
+        })
       })
     } catch (err) {
       Api.serverError(req, res, err)
@@ -111,7 +114,9 @@ export class CollaboratorCtrl {
     m.executeQuery(sql, true).then(
       result => {
         if (result[0]) {
-          const sql2 = `Select * From collaborator Where my_id=${my_id} AND collab_id=${result[0].id}`
+          const sql2 = `Select * From collaborator Where my_id=${my_id} AND collab_id=${
+            result[0].id
+          }`
           m.executeQuery(sql2, true).then(r => {
             if (r[0]) {
               console.log(r[0])
