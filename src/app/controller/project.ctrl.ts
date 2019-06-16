@@ -88,13 +88,19 @@ export class ProjectCtrl {
       const m = new ProjectModel()
       const m2 = new ProjectMembersModel()
       const sql = `INSERT INTO project(name,created_by_id,start_date,end_date,description)
-    VALUES('${project.name}',${project.created_by_id},'${project.start_date}','${project.end_date}','${project.description}')`
-      const inserted = `Select * From project WHERE name='${project.name}' AND created_by_id=${project.created_by_id}`
+    VALUES('${project.name}',${project.created_by_id},'${project.start_date}','${
+        project.end_date
+      }','${project.description}')`
+      const inserted = `Select * From project WHERE name='${
+        project.name
+      }' AND created_by_id=${project.created_by_id}`
       m.executeQuery(sql, true).then(result => {
         if (members && members.length > 0) {
           m.executeQuery(inserted, true).then(insertedProject => {
             members.forEach(async member => {
-              const sql2 = `INSERT INTO project_members(member_id, project_id) VALUES(${member}, ${insertedProject[0].id})`
+              const sql2 = `INSERT INTO project_members(member_id, project_id) VALUES(${member}, ${
+                insertedProject[0].id
+              })`
               await m2.executeQuery(sql2)
             })
           })
@@ -117,13 +123,19 @@ export class ProjectCtrl {
       const members = req.body.members
       const pm = new ProjectModel()
       const pmm = new ProjectMembersModel()
-      const sql = `UPDATE project SET name = '${project.name}', description = '${project.description}', start_date='${project.start_date}', end_date='${project.end_date}' WHERE id=${project.id}`
+      const sql = `UPDATE project SET name = '${project.name}', description = '${
+        project.description
+      }', start_date='${project.start_date}', end_date='${project.end_date}' WHERE id=${
+        project.id
+      }`
       const deleteMembers = `Delete From project_members Where project_id=${project.id}`
       pm.executeQuery(sql).then(result => {
         if (members && members.length > 0) {
           pmm.executeQuery(deleteMembers).then(del => {
             members.forEach(async member => {
-              const sql2 = `INSERT INTO project_members(member_id, project_id) VALUES(${member}, ${project.id})`
+              const sql2 = `INSERT INTO project_members(member_id, project_id) VALUES(${member}, ${
+                project.id
+              })`
               await pmm.executeQuery(sql2)
             })
           })

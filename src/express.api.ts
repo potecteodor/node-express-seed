@@ -6,7 +6,6 @@ import * as http from 'http'
 import { ApiRouting } from './api.routing'
 import AuthService from './app/services/auth.service'
 import { AppSetting, IConfig } from './config'
-import { SwaggerController } from './core/controller/swagger.controller'
 import { Api } from './core/services/api'
 
 export class ExpressApi {
@@ -77,7 +76,6 @@ export class ExpressApi {
       }
       next()
     })
-    SwaggerController.configure(this.app)
     ApiRouting.ConfigureRouters(this.app)
   }
 

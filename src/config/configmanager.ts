@@ -1,8 +1,6 @@
-import { IConfig } from './IConfig'
-import { AppSetting } from './app.setting'
 import { Environment } from '.'
-import { dirname } from 'path'
-import { Logger } from '../helpers'
+import { AppSetting } from './app.setting'
+import { IConfig } from './IConfig'
 const nconf = require('nconf')
 const path = require('path')
 
@@ -20,7 +18,7 @@ export class ConfigManager {
         filename = 'config.prod.json'
         break
       default:
-        Logger.error('Unable to read the config file')
+        // Logger.error('Unable to read the config file')
         process.exit()
         break
     }
@@ -30,7 +28,7 @@ export class ConfigManager {
     }
     this.Config = nconf.get('Config')
     if (!this.Config) {
-      Logger.error('Unable to read the config file')
+      // Logger.error('Unable to read the config file')
 
       process.exit()
     }

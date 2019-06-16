@@ -36,7 +36,6 @@ export default class AuthMail {
    */
   static sendActivationEmail(id, email) {
     const k = Crypt.crypt({ key: id })
-    // send registration email
     const link = config.corsDomains[0] + '/#/auth/activate/' + k
 
     const mailOptions = {
@@ -48,8 +47,8 @@ export default class AuthMail {
         '">link</a> to activate your account !',
       htmlFile: 'sendActivation',
       data: {
-        title: 'TaskManager Account Activation',
-        header: 'Register to TaskManager',
+        title: 'ProjectManager Account Activation',
+        header: 'Register to ProjectManager',
         content:
           'Your account is now created !<br />Click on this <a href="' +
           link +

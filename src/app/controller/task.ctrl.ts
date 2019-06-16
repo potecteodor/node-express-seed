@@ -67,13 +67,19 @@ export class TaskCtrl {
       const members = req.body.members
       const tm = new TaskModel()
       const tmm = new TaskMembersModel()
-      const sql = `UPDATE task SET subject = '${task.subject}', description = '${task.description}', start_date='${task.start_date}', priority='${task.priority}',status='${task.status}', end_date='${task.end_date}' WHERE id=${task.id}`
+      const sql = `UPDATE task SET subject = '${task.subject}', description = '${
+        task.description
+      }', start_date='${task.start_date}', priority='${task.priority}',status='${
+        task.status
+      }', end_date='${task.end_date}' WHERE id=${task.id}`
       const deleteMembers = `Delete From task_members Where task_id=${task.id}`
       tm.executeQuery(sql).then(result => {
         if (members && members.length > 0) {
           tmm.executeQuery(deleteMembers).then(del => {
             members.forEach(async member => {
-              const sql2 = `INSERT INTO task_members(member_id, task_id) VALUES(${member}, ${task.id})`
+              const sql2 = `INSERT INTO task_members(member_id, task_id) VALUES(${member}, ${
+                task.id
+              })`
               await tmm.executeQuery(sql2)
             })
           })
@@ -175,13 +181,19 @@ export class TaskCtrl {
       const m = new TaskModel()
       const m2 = new TaskMembersModel()
       const sql = `INSERT INTO task(subject,created_by,start_date,end_date,project_id,priority,status,description)
-    VALUES('${task.subject}',${task.created_by},'${task.start_date}','${task.end_date}',${task.project_id},'${task.priority}','${task.status}','${task.description}')`
-      const inserted = `Select * From task WHERE subject='${task.subject}' AND created_by=${task.created_by}`
+    VALUES('${task.subject}',${task.created_by},'${task.start_date}','${task.end_date}',${
+        task.project_id
+      },'${task.priority}','${task.status}','${task.description}')`
+      const inserted = `Select * From task WHERE subject='${
+        task.subject
+      }' AND created_by=${task.created_by}`
       m.executeQuery(sql, true).then(result => {
         if (members && members.length > 0) {
           m.executeQuery(inserted, true).then(insertedTask => {
             members.forEach(async member => {
-              const sql2 = `INSERT INTO task_members(member_id, task_id) VALUES(${member}, ${insertedTask[0].id})`
+              const sql2 = `INSERT INTO task_members(member_id, task_id) VALUES(${member}, ${
+                insertedTask[0].id
+              })`
               await m2.executeQuery(sql2)
             })
           })
